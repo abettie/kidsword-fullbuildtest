@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
+import 'home_screen.dart';
 
 class PostFormScreen extends ConsumerStatefulWidget {
   const PostFormScreen({super.key});
@@ -35,6 +36,8 @@ class _PostFormScreenState extends ConsumerState<PostFormScreen> {
             description: _descriptionController.text.trim(),
           );
       if (mounted) {
+        ref.invalidate(feedPostsProvider);
+        ref.invalidate(myPostsProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('投稿しました！')),
         );
