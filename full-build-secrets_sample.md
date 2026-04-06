@@ -1,0 +1,47 @@
+# full-build-secrets.md
+# このファイルはgit管理対象外です。機密情報を記入してください。
+
+## AWS認証情報
+
+AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_ACCESS_KEY
+AWS_REGION=ap-northeast-1
+
+## Androidアプリ設定
+
+ANDROID_PACKAGE_NAME=com.example.app
+
+## Firebase設定
+
+# FirebaseプロジェクトID（例: my-app-12345）
+# Firebaseコンソール → プロジェクトの設定 → 全般 → プロジェクトID
+FIREBASE_PROJECT_ID=your-project-id
+
+# google-services.jsonの内容をそのまま貼り付けてください
+# Firebaseコンソール → プロジェクトの設定 → マイアプリ → Androidアプリ → google-services.jsonをダウンロード
+GOOGLE_SERVICES_JSON=
+{
+  ***
+}
+
+## Terraform設定
+
+# Terraform state管理用S3バケット名
+# AWSコンソール → S3 → バケット名を確認してください
+TERRAFORM_STATE_BUCKET=tfstate-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+## 構築対象環境
+
+# dev / staging / prod のいずれかを指定
+TARGET_ENV=dev
+
+# Firebase Admin SDK サービスアカウントキー（google-services.json とは別のファイルです）
+# 取得手順:
+#   1. Firebase コンソール → プロジェクトの設定
+#   2. 「サービスアカウント」タブ
+#   3. 「新しい秘密鍵の生成」ボタン → JSON ファイルをダウンロード
+#   4. そのファイルの内容をそのまま貼り付けてください
+FIREBASE_SERVICE_ACCOUNT_JSON=
+{
+  ***
+}
