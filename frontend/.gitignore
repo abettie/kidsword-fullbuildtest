@@ -1,0 +1,17 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+*.iml
+
+# Android local
+android/local.properties
+android/.gradle/
+android/captures/
+android/generatedConfigs/
+
+# Sensitive
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
