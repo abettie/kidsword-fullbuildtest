@@ -72,6 +72,86 @@ flutter test      # テスト実行
 flutter run       # 実機/エミュレータで起動 (google-services.json が必要)
 ```
 
+#### WSL2 + 実機Androidで起動する場合
+
+WSL2はUSBデバイスをそのまま認識しないため、追加のセットアップが必要です。
+
+**1. usbipd-win をインストール（Windowsで実施）**
+
+PowerShell（管理者）で実行:
+
+```powershell
+winget install usbipd
+```
+
+**2. Android実機をWSL2に接続（Windowsで実施）**
+
+実機をUSBで接続した後、PowerShell（管理者）で実行:
+
+```powershell
+# 接続済みデバイスを確認（VID:PID が 18d1:xxxx のものがPixel等Google端末）
+usbipd list
+
+# 共有を許可してWSL2にアタッチ（BUSIDは usbipd list で確認した値）
+usbipd bind --busid <BUSID>
+usbipd attach --wsl --busid <BUSID>
+```
+
+**3. WSL2側のUSB権限を設定（初回のみ）**
+
+```bash
+echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android.rules
+sudo chmod a+r /etc/udev/rules.d/51-android.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+設定後、PowerShellで一度 detach → attach をやり直す:
+
+```powershell
+usbipd detach --busid <BUSID>
+usbipd attach --wsl --busid <BUSID>
+```
+
+**4. Android SDK をインストール（初回のみ）**
+
+```bash
+# Command Line Tools をダウンロード・配置
+mkdir -p ~/Android/SDK/cmdline-tools
+cd /tmp
+wget https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip
+unzip commandlinetools-linux-13114758_latest.zip -d ~/Android/SDK/cmdline-tools
+mv ~/Android/SDK/cmdline-tools/cmdline-tools ~/Android/SDK/cmdline-tools/latest
+
+# PATH に追加
+echo 'export ANDROID_HOME=$HOME/Android/SDK' >> ~/.bashrc
+echo 'export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+source ~/.bashrc
+
+# SDK コンポーネントをインストール・ライセンスに同意
+sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+sdkmanager --licenses
+
+# Flutter に SDK パスを設定
+flutter config --android-sdk ~/Android/SDK
+```
+
+**5. Java 17 をインストール（初回のみ）**
+
+Flutter/Gradle は Java 17〜24 が必要です（Java 25以上は非対応）。
+
+```bash
+sudo apt install -y openjdk-17-jdk
+flutter config --jdk-dir=/usr/lib/jvm/java-17-openjdk-amd64
+```
+
+**6. 実機でアプリを起動**
+
+```bash
+adb devices   # 実機が表示されることを確認
+cd ~/repositories/kidsword/frontend
+flutter run
+```
+
 ---
 
 ## 環境変数の設定
