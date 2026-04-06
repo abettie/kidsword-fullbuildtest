@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
 
 class NicknameScreen extends ConsumerStatefulWidget {
@@ -25,7 +26,7 @@ class _NicknameScreenState extends ConsumerState<NicknameScreen> {
     setState(() => _isLoading = true);
     try {
       await ref.read(apiServiceProvider).updateProfile(_controller.text.trim());
-      // go_router が authState の変化を検知してリダイレクト
+      if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
