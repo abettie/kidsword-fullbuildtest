@@ -8,7 +8,7 @@ import 'auth_service.dart';
 // 本番デプロイ後にterraform outputのapi_endpointに置き換える
 const String _apiBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://REPLACE_WITH_API_ENDPOINT',
+  defaultValue: 'https://vak5sbjvd5.execute-api.ap-northeast-1.amazonaws.com/dev',
 );
 
 final apiServiceProvider = Provider<ApiService>((ref) {
