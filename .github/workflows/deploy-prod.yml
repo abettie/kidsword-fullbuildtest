@@ -1,0 +1,54 @@
+name: Deploy to Production
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    name: Deploy prod
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      AWS_REGION: ap-northeast-1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Build Lambda functions
+        working-directory: backend
+        run: |
+          npm ci
+          bash build.sh
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.5"
+
+      - name: Terraform init
+        working-directory: infrastructure/environments/dev
+        run: terraform init
+
+      - name: Terraform apply
+        working-directory: infrastructure/environments/dev
+        run: |
+          terraform apply -auto-approve \
+            -var="firebase_service_account_json=${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}"
+
+      - name: Get API endpoint
+        working-directory: infrastructure/environments/dev
+        run: terraform output api_endpoint
