@@ -76,7 +76,7 @@ flutter run       # 実機/エミュレータで起動 (google-services.json が
 
 WSL2はUSBデバイスをそのまま認識しないため、追加のセットアップが必要です。
 
-**1. usbipd-win をインストール（Windowsで実施）**
+**1. usbipd-win をインストール（Windowsで実施・初回のみ）**
 
 PowerShell（管理者）で実行:
 
@@ -89,12 +89,8 @@ winget install usbipd
 実機をUSBで接続した後、PowerShell（管理者）で実行:
 
 ```powershell
-# 接続済みデバイスを確認（VID:PID が 18d1:xxxx のものがPixel等Google端末）
-usbipd list
-
-# 共有を許可してWSL2にアタッチ（BUSIDは usbipd list で確認した値）
-usbipd bind --busid <BUSID>
-usbipd attach --wsl --busid <BUSID>
+# ADB接続中のデバイスを自動検出してWSL2にアタッチ
+$busid = (usbipd list | Select-String "ADB").ToString().Trim() -split '\s+' | Select-Object -First 1; usbipd bind --busid $busid; usbipd attach --wsl --busid $busid
 ```
 
 **3. WSL2側のUSB権限を設定（初回のみ）**
@@ -151,6 +147,18 @@ adb devices   # 実機が表示されることを確認
 cd ~/repositories/kidsword/frontend
 flutter run
 ```
+
+**7. 実機にアプリを永続インストール**
+
+`flutter run` はUSB接続中のみ動作するデバッグ起動です。
+USBを外しても使えるよう実機にインストールするには、`flutter install` を使います。
+
+```bash
+cd ~/repositories/kidsword/frontend
+flutter build apk && flutter install
+```
+
+インストール後はUSBを外してもアプリを起動できます。
 
 ---
 
