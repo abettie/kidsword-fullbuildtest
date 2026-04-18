@@ -39,15 +39,20 @@ jobs:
         with:
           terraform_version: "~1.5"
 
+      - name: Write Firebase service account key
+        working-directory: infrastructure/environments/dev
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > firebase-service-account.json
+
       - name: Terraform init
         working-directory: infrastructure/environments/dev
         run: terraform init
 
       - name: Terraform apply
         working-directory: infrastructure/environments/dev
-        run: |
-          terraform apply -auto-approve \
-            -var="firebase_service_account_json=${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}"
+        run: terraform apply -auto-approve
 
       - name: Get API endpoint
         working-directory: infrastructure/environments/dev

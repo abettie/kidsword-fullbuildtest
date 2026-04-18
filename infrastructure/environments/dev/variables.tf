@@ -8,12 +8,6 @@ variable "env" {
   default = "dev"
 }
 
-variable "firebase_service_account_json" {
-  type        = string
-  description = "Firebase Admin SDK サービスアカウントキーのJSON文字列"
-  sensitive   = true
-}
-
 variable "users_zip_path" {
   type        = string
   description = "users Lambda関数のZIPファイルパス"

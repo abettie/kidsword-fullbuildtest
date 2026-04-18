@@ -221,13 +221,15 @@ cd backend
 npm ci
 bash build.sh
 
-# 2. Terraform でインフラを構築
+# 2. Firebase サービスアカウントキーを配置（git管理外）
 cd ../infrastructure/environments/dev
-terraform init
-terraform apply \
-  -var="firebase_service_account_json=$(cat /path/to/service-account.json)"
+cp /path/to/service-account.json ./firebase-service-account.json
 
-# 3. API エンドポイントを確認
+# 3. Terraform でインフラを構築
+terraform init
+terraform apply
+
+# 4. API エンドポイントを確認
 terraform output api_endpoint
 ```
 

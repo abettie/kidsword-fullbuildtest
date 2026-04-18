@@ -38,7 +38,7 @@ resource "aws_secretsmanager_secret" "firebase" {
 
 resource "aws_secretsmanager_secret_version" "firebase" {
   secret_id     = aws_secretsmanager_secret.firebase.id
-  secret_string = var.firebase_service_account_json
+  secret_string = file("${path.module}/firebase-service-account.json")
 }
 
 module "dynamodb" {
